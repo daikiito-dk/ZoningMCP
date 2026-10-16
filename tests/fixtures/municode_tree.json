@@ -1,0 +1,64 @@
+{
+  "Id": "15303",
+  "Heading": "Land Development Code",
+  "NodeDepth": -1,
+  "HasChildren": true,
+  "ParentId": null,
+  "DocOrderId": -1,
+  "Children": [
+    {
+      "Id": "TIT25LADE",
+      "Heading": "TITLE 25. - LAND DEVELOPMENT.",
+      "NodeDepth": 1,
+      "HasChildren": true,
+      "ParentId": "15303",
+      "DocOrderId": 1,
+      "Children": [
+        {
+          "Id": "TIT25LADE_CH25-2ZO",
+          "Heading": "CHAPTER 25-2. - ZONING.",
+          "NodeDepth": 2,
+          "HasChildren": true,
+          "ParentId": "TIT25LADE",
+          "DocOrderId": 2,
+          "Children": [
+            {
+              "Id": "TIT25LADE_CH25-2ZO_S25-2-491PECOPRUS",
+              "Heading": "§ 25-2-491 - PERMITTED, CONDITIONAL, AND PROHIBITED USES.",
+              "NodeDepth": 3,
+              "HasChildren": false,
+              "ParentId": "TIT25LADE_CH25-2ZO",
+              "DocOrderId": 3,
+              "Children": [],
+              "Data": {"NodeKey": "15303_10", "ChunkGroupStartingId": "TIT25LADE_CH25-2ZO"}
+            }
+          ],
+          "Data": {"NodeKey": "15303_2", "ChunkGroupStartingId": "TIT25LADE_CH25-2ZO"}
+        },
+        {
+          "Id": "TIT25LADE_CH25-8EN",
+          "Heading": "CHAPTER 25-8. - ENVIRONMENT.",
+          "NodeDepth": 2,
+          "HasChildren": true,
+          "ParentId": "TIT25LADE",
+          "DocOrderId": 4,
+          "Children": [
+            {
+              "Id": "TIT25LADE_CH25-8EN_S25-8-1DE",
+              "Heading": "§ 25-8-1 - DEFINITIONS.",
+              "NodeDepth": 3,
+              "HasChildren": false,
+              "ParentId": "TIT25LADE_CH25-8EN",
+              "DocOrderId": 5,
+              "Children": [],
+              "Data": {"NodeKey": "15303_20", "ChunkGroupStartingId": "TIT25LADE_CH25-8EN"}
+            }
+          ],
+          "Data": {"NodeKey": "15303_4", "ChunkGroupStartingId": "TIT25LADE_CH25-8EN"}
+        }
+      ],
+      "Data": {"NodeKey": "15303_1", "ChunkGroupStartingId": "TIT25LADE"}
+    }
+  ],
+  "Data": {"NodeKey": null, "ChunkGroupStartingId": null}
+}

@@ -1,0 +1,43 @@
+{
+  "Docs": [
+    {
+      "DocType": 1,
+      "Id": "TIT25LADE_CH25-8EN",
+      "Title": "CHAPTER 25-8. - ENVIRONMENT.",
+      "Content": "<div class=\"chunk-content\"><p class=\"b0\"> </p></div>",
+      "DocOrderId": 4,
+      "SortDate": null,
+      "Footnotes": null
+    },
+    {
+      "DocType": 1,
+      "Id": "TIT25LADE_CH25-8EN_S25-8-1DE",
+      "Title": "§ 25-8-1 - DEFINITIONS.",
+      "Content": "<div class=\"chunk-content\"><p class=\"b0\">In this chapter, unless the context otherwise requires:</p><p class=\"p1\">APPLICANT means a person who applies for a development permit or approval.</p><p class=\"p1\">CRITICAL WATER QUALITY ZONE means an area within 100 feet of a waterway.</p></div>",
+      "DocOrderId": 5,
+      "SortDate": null,
+      "Footnotes": null
+    },
+    {
+      "DocType": 1,
+      "Id": "TIT25LADE_CH25-8EN_S25-8-2DE",
+      "Title": "§ 25-8-2 - DETERMINATION OF REQUIREMENTS.",
+      "Content": "<div class=\"chunk-content\"><table><tr><th>Development type</th><th>Requirement</th></tr><tr><td>Subdivision</td><td>Water quality controls</td></tr></table></div>",
+      "DocOrderId": 6,
+      "SortDate": null,
+      "Footnotes": null
+    },
+    {
+      "DocType": 1,
+      "Id": "TIT25LADE_CH25-8EN_S25-8-1DE_DUP",
+      "Title": "§ 25-8-1 - DEFINITIONS.",
+      "Content": "<div class=\"chunk-content\"><p>duplicate chunk of the same section</p></div>",
+      "DocOrderId": 7,
+      "SortDate": null,
+      "Footnotes": null
+    }
+  ],
+  "NewOrds": [],
+  "PdfUrl": null,
+  "ShowToc": true
+}

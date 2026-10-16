@@ -3,11 +3,17 @@
 city: austin
 state: TX
 county_fips: "48453" # Travis County, TX
-document_title: "Austin Land Development Code (Code of Ordinances, Title 25)"
-url: "https://library.municode.com/tx/austin/codes/code_of_ordinances?nodeId=TIT25LADE"
-format: html
-# Austin ordinance sections are numbered like "§ 25-2-491. PERMITTED USES."
-section_pattern: '§\s*(?P<section_id>\d+-\d+-\d+)\.\s*(?P<title>[^\n]+)'
+document_title: "Austin Land Development Code (Title 25)"
+url: "https://library.municode.com/tx/austin/codes/land_development_code"
+format: municode
+municode:
+  state_abbr: TX
+  client_name: Austin
+  product_name: Land Development Code # Municode productId 15303 (Title 25)
+  client_path: tx/austin
+  product_path: land_development_code
+  # Phase 1 スコープ: Zoning / Drainage / Environment の 3 章
+  include_chapters: ["25-2", "25-7", "25-8"]
 max_chunk_chars: 1500
 tags:
   - zoning

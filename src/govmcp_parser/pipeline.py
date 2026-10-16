@@ -22,6 +22,7 @@ import pyarrow.parquet as pq
 from govmcp_parser.chunker import chunk_text
 from govmcp_parser.html_parser import html_to_markdown, split_into_sections
 from govmcp_parser.models import Chunk, GroundingMetadata
+from govmcp_parser.municode import Section, fetch_municode_sections
 from govmcp_parser.pdf_parser import parse_pdf, pdf_to_text
 from govmcp_parser.sources import SourceDefinition
 
@@ -38,31 +39,45 @@ def fetch(url: str, timeout: float = 60.0) -> bytes:
         return response.content
 
 
-def build_chunks(
-    source: SourceDefinition, raw: bytes
-) -> list[Chunk]:
-    """Parse a raw document into grounded chunks for one source."""
+def collect_sections(source: SourceDefinition, raw: bytes | None = None) -> list[Section]:
+    """Parse or fetch the sections for one source, in any supported format."""
+    if source.format == "municode":
+        return fetch_municode_sections(source)
+    if raw is None:
+        logger.info("fetching %s", source.url)
+        raw = fetch(source.url)
     if source.format == "pdf":
-        sections = parse_pdf(raw, source)
+        tuples = parse_pdf(raw, source)
     else:
         markdown = html_to_markdown(
             raw.decode("utf-8", errors="replace"), source.content_selector
         )
-        sections = split_into_sections(markdown, source)
+        tuples = split_into_sections(markdown, source)
+    return [
+        Section(section_id=sid, title=title, body=body, source_url=source.url)
+        for sid, title, body in tuples
+    ]
+
+
+def build_chunks(
+    source: SourceDefinition, raw: bytes | None = None
+) -> list[Chunk]:
+    """Parse a raw document into grounded chunks for one source."""
+    sections = collect_sections(source, raw)
 
     chunks: list[Chunk] = []
-    for section_id, title, body in sections:
+    for section in sections:
         metadata = GroundingMetadata(
             state=source.state,
             county_fips=source.county_fips,
             city=source.city,
-            section_id=section_id,
-            section_title=title,
+            section_id=section.section_id,
+            section_title=section.title,
             effective_date=source.effective_date,
-            source_url=source.url,
+            source_url=section.source_url,
             document_title=source.document_title,
         )
-        for i, text in enumerate(chunk_text(body, source.max_chunk_chars)):
+        for i, text in enumerate(chunk_text(section.body, source.max_chunk_chars)):
             chunks.append(Chunk(metadata=metadata, text=text, chunk_index=i))
     logger.info("built %d chunks from %d sections", len(chunks), len(sections))
     return chunks
@@ -121,9 +136,6 @@ def run_source(
     raw: bytes | None = None,
 ) -> list[Chunk]:
     """Full ingestion run for one source definition."""
-    if raw is None:
-        logger.info("fetching %s", source.url)
-        raw = fetch(source.url)
     chunks = build_chunks(source, raw)
     paths = write_outputs(chunks, source, data_dir)
     logger.info("wrote outputs: %s", {k: str(v) for k, v in paths.items()})

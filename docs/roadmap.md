@@ -9,8 +9,9 @@
 - [x] パース・チャンキング・Grounding Metadata 付与の実装
 - [x] MCP ツール 3 種（`get_zoning_rules` / `search_environmental_regulations` / `verify_source_citation`）
 - [x] DuckDB クエリレイヤー（ローカル parquet データレイク）
-- [x] テスト 11 件パス（フィクスチャベース、ネットワーク不要）
-- [ ] Austin 実データ取り込み（Municode が JS レンダリングのため素の HTTP 取得では条文を取得できないことを確認済み）
+- [x] テスト 15 件パス（フィクスチャベース、ネットワーク不要）
+- [x] Austin 実データ取り込み（2026-10-16）: Municode SPA の内部 JSON API（`/api/CodesContent` 等、`X-CSRF: 1` ヘッダ）を利用し JS レンダリング不要で取得。Chapter 25-2 (Zoning) / 25-7 (Drainage) / 25-8 (Environment) の 666 セクション / 1084 チャンク。大容量チャンクグループは API が 500 を返すためセクション単位フェッチへフォールバック
+- [x] MCP ツールの実データ検証: `get_zoning_rules(austin, CS-1)` / `search_environmental_regulations` / `verify_source_citation` がセクション単位のディープリンク付き原文を返却
 
 ## マイルストーン
 
