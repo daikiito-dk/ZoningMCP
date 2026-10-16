@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+
+# Local data lake mirror (production data lives in S3)
+data/
+!data/.gitkeep
+
+# OS
+.DS_Store
