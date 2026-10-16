@@ -31,6 +31,11 @@ def main() -> None:
         default=None,
         help="Parse a local file instead of fetching the source URL",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-ingest even when the source fingerprint is unchanged",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -47,7 +52,10 @@ def main() -> None:
     raw = Path(args.file).read_bytes() if args.file else None
     total = 0
     for source in sources:
-        chunks = run_source(source, args.data_dir, raw=raw)
+        chunks = run_source(source, args.data_dir, raw=raw, force=args.force)
+        if chunks is None:
+            print(f"{source.city}: unchanged, skipped (use --force to re-ingest)")
+            continue
         print(f"{source.city}: {len(chunks)} chunks from {source.url}")
         total += len(chunks)
     print(f"total: {total} chunks -> {args.data_dir}/")

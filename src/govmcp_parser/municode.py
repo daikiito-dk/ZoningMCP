@@ -104,6 +104,14 @@ class MunicodeClient:
             f"municode product not found for client {client_id}: {product_name}"
         )
 
+    def get_product_latest_update(self, client_id: int, product_id: int) -> Optional[str]:
+        """The product's ``latestUpdatedDate`` — a cheap change signal."""
+        content = self._get(f"ClientContent/{client_id}")
+        for product in content.get("codes", []):
+            if int(product.get("productId", -1)) == product_id:
+                return product.get("latestUpdatedDate")
+        return None
+
     def get_tree(self, product_id: int, node_id: Optional[str] = None) -> dict:
         return self._get(
             "codesToc/fullTree/latest",
@@ -170,6 +178,15 @@ def docs_to_sections(
             )
         )
     return sections
+
+
+def municode_fingerprint(source: SourceDefinition) -> Optional[str]:
+    """Cheap change signal for a municode source (no full ingestion)."""
+    cfg = source.municode or {}
+    with MunicodeClient() as client:
+        client_id = client.find_client_id(cfg["state_abbr"], cfg["client_name"])
+        product_id = client.find_product_id(client_id, cfg["product_name"])
+        return client.get_product_latest_update(client_id, product_id)
 
 
 def fetch_municode_sections(source: SourceDefinition) -> list[Section]:

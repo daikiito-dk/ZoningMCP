@@ -55,7 +55,7 @@ LOCATION 's3://govmcp-data-lake/parquet/';
 
 ## DuckDB (local / Lambda embedded)
 
-`govmcp-server` の `RegulationStore` がそのまま使える。S3 直参照は httpfs 拡張で対応予定。
+`govmcp-server` の `RegulationStore` がそのまま使える。`--data-dir`（または環境変数 `GOVMCP_DATA_DIR`）に `s3://govmcp-data-lake` のような S3 URI を渡すと httpfs 拡張経由で S3 上の parquet を直接クエリする（認証は AWS 標準チェーン: 環境変数 / IAM ロール、`AWS_REGION` でリージョン指定）。
 
 ## Lambda Deployment (MCP endpoint)
 
@@ -65,7 +65,7 @@ LOCATION 's3://govmcp-data-lake/parquet/';
 
 ## Roadmap
 
-- [ ] Terraform / CDK で S3 バケット・Lambda・EventBridge をコード化
-- [ ] ETag / Last-Modified による改定検知と差分再パース
-- [ ] Phase 2: Loudoun County, VA / Phase 3: San Jose, CA のソース定義追加
-- [ ] DuckDB httpfs による S3 直クエリ
+- [ ] Terraform / CDK で S3 バケット・Lambda・EventBridge をコード化 (#5)
+- [x] 改定検知と差分スキップ: municode は `latestUpdatedDate`、HTML/PDF は ETag / Last-Modified を `<data_dir>/.govmcp_state.json` に記録し、変更がなければ取り込みをスキップ（`--force` で強制）。EventBridge 週次化は #5 とあわせて実施 (#2)
+- [ ] Phase 2: Loudoun County, VA / Phase 3: San Jose, CA のソース定義追加 (#7, #8)
+- [x] DuckDB httpfs による S3 直クエリ（`RegulationStore` が `s3://` URI を受理）(#6)

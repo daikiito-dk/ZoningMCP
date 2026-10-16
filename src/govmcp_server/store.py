@@ -7,6 +7,7 @@ No always-on database is required; queries are served by an embedded DuckDB.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any, Optional
 
@@ -14,12 +15,25 @@ import duckdb
 
 
 class RegulationStore:
-    """Query interface over parquet chunks produced by govmcp-parser."""
+    """Query interface over parquet chunks produced by govmcp-parser.
+
+    ``data_dir`` may be a local directory or an ``s3://`` URI pointing at the
+    data lake bucket. S3 access uses the DuckDB httpfs extension; credentials
+    come from the standard AWS chain (environment variables, IAM role).
+    """
 
     def __init__(self, data_dir: str | Path = "data") -> None:
-        self.data_dir = Path(data_dir)
+        location = str(data_dir).rstrip("/")
+        self.data_dir = location
         self._conn = duckdb.connect()
-        glob = str(self.data_dir / "parquet" / "**" / "*.parquet")
+        if location.startswith("s3://"):
+            self._conn.execute("INSTALL httpfs; LOAD httpfs;")
+            region = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION")
+            if region:
+                self._conn.execute(f"SET s3_region='{region}'")
+            glob = f"{location}/parquet/**/*.parquet"
+        else:
+            glob = str(Path(location) / "parquet" / "**" / "*.parquet")
         self._conn.execute(
             f"CREATE OR REPLACE VIEW chunks AS SELECT * FROM read_parquet('{glob}', hive_partitioning=true)"
         )

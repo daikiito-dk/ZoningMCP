@@ -22,9 +22,14 @@ import pyarrow.parquet as pq
 from govmcp_parser.chunker import chunk_text
 from govmcp_parser.html_parser import html_to_markdown, split_into_sections
 from govmcp_parser.models import Chunk, GroundingMetadata
-from govmcp_parser.municode import Section, fetch_municode_sections
+from govmcp_parser.municode import (
+    Section,
+    fetch_municode_sections,
+    municode_fingerprint,
+)
 from govmcp_parser.pdf_parser import parse_pdf, pdf_to_text
 from govmcp_parser.sources import SourceDefinition
+from govmcp_parser.state import SourceState
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +42,24 @@ def fetch(url: str, timeout: float = 60.0) -> bytes:
         response = client.get(url, headers={"User-Agent": USER_AGENT})
         response.raise_for_status()
         return response.content
+
+
+def http_fingerprint(source: SourceDefinition) -> str | None:
+    """ETag / Last-Modified of an HTML or PDF source URL."""
+    try:
+        with httpx.Client(follow_redirects=True, timeout=30) as client:
+            response = client.head(source.url, headers={"User-Agent": USER_AGENT})
+            return response.headers.get("etag") or response.headers.get("last-modified")
+    except httpx.HTTPError as exc:
+        logger.warning("fingerprint HEAD request failed for %s: %s", source.url, exc)
+        return None
+
+
+def compute_fingerprint(source: SourceDefinition) -> str | None:
+    """A cheap change signal for a source, without full ingestion."""
+    if source.format == "municode":
+        return municode_fingerprint(source)
+    return http_fingerprint(source)
 
 
 def collect_sections(source: SourceDefinition, raw: bytes | None = None) -> list[Section]:
@@ -134,9 +157,25 @@ def run_source(
     source: SourceDefinition,
     data_dir: str | Path,
     raw: bytes | None = None,
-) -> list[Chunk]:
-    """Full ingestion run for one source definition."""
+    force: bool = False,
+) -> list[Chunk] | None:
+    """Full ingestion run for one source definition.
+
+    Returns ``None`` when the source is unchanged since the last run
+    (freshness fingerprint match) and ``force`` is not set. Runs driven by a
+    local ``raw`` file always execute and are not tracked.
+    """
+    state = SourceState(data_dir)
+    key = SourceState.key(source.city, source.state, source.document_title)
+    fingerprint = compute_fingerprint(source) if raw is None else None
+    if fingerprint and not force and state.fingerprint(key) == fingerprint:
+        logger.info("unchanged (fingerprint %s), skipping %s", fingerprint, source.city)
+        return None
     chunks = build_chunks(source, raw)
     paths = write_outputs(chunks, source, data_dir)
     logger.info("wrote outputs: %s", {k: str(v) for k, v in paths.items()})
+    if fingerprint:
+        sections = {c.metadata.section_id for c in chunks}
+        state.record(key, fingerprint, sections=len(sections), chunks=len(chunks))
+        state.save()
     return chunks
