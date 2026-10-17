@@ -59,9 +59,12 @@ LOCATION 's3://govmcp-data-lake/parquet/';
 
 ## Lambda Deployment (MCP endpoint)
 
-1. `govmcp-parser` をスケジュール実行（EventBridge: 週次）し、差分検知（ETag / Last-Modified）で変更自治体のみ再パース → S3 へ書き込み。
-2. `govmcp-server` を Lambda + Function URL（または API Gateway）で streamable HTTP MCP transport として公開。
-3. コスト目安: S3 ストレージ (数 GB 未満) + Athena/DuckDB クエリ従量 + Lambda 実行時間のみ。
+インフラ定義は `infra/terraform/`（コードのみ、apply は未実施）。
+
+- **MCP サーバー**: `govmcp_server.lambda_app.handler`（Mangum + `mcp.streamable_http_app()`）を Lambda Function URL で公開。ローカル検証は `uv run govmcp-serve --transport http --port 8000`（`/mcp` が streamable HTTP エンドポイント）。
+- **パーサー**: `govmcp_parser.lambda_handler.handler` を EventBridge 週次実行。freshness state（`.govmcp_state.json`）を S3 と同期し、変更自治体のみ再パースして S3 にアップロード。
+- **認証**: PoC は Function URL `authorization_type = "NONE"`。本番化前に IAM / OIDC 等へ変更すること。
+- コスト目安: S3 ストレージ (数 GB 未満) + Athena/DuckDB クエリ従量 + Lambda 実行時間のみ。
 
 ## Roadmap
 

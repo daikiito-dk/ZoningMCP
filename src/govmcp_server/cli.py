@@ -20,6 +20,14 @@ def main() -> None:
         action="store_true",
         help="Print ingested coverage summary and exit (no server)",
     )
+    parser.add_argument(
+        "--transport",
+        choices=["stdio", "http"],
+        default="stdio",
+        help="MCP transport: stdio (default) or streamable HTTP",
+    )
+    parser.add_argument("--host", default="127.0.0.1", help="HTTP transport bind host")
+    parser.add_argument("--port", type=int, default=8000, help="HTTP transport port")
     args = parser.parse_args()
 
     if args.coverage:
@@ -33,7 +41,7 @@ def main() -> None:
 
     from govmcp_server.server import main as serve
 
-    serve(data_dir=args.data_dir)
+    serve(data_dir=args.data_dir, transport=args.transport, host=args.host, port=args.port)
 
 
 if __name__ == "__main__":

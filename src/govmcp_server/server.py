@@ -94,7 +94,22 @@ def verify_source_citation(
     }
 
 
-def main(data_dir: str = DEFAULT_DATA_DIR) -> None:
+def main(
+    data_dir: str = DEFAULT_DATA_DIR,
+    transport: str = "stdio",
+    host: str = "127.0.0.1",
+    port: int = 8000,
+) -> None:
     global DEFAULT_DATA_DIR
     DEFAULT_DATA_DIR = data_dir
-    mcp.run()
+    if transport == "stdio":
+        mcp.run()
+    elif transport == "http":
+        # Streamable HTTP (current MCP standard). Used directly for plain
+        # HTTP serving; on AWS Lambda the same app is wrapped by Mangum
+        # (see govmcp_server.lambda_app).
+        mcp.settings.host = host
+        mcp.settings.port = port
+        mcp.run(transport="streamable-http")
+    else:
+        raise ValueError(f"unknown transport: {transport}")
