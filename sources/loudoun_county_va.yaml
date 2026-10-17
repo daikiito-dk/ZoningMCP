@@ -1,0 +1,21 @@
+# Phase 2: Loudoun County, VA — Zoning Ordinance (2023 改正版, enCodePlus ホスト)
+# 世界最大のデータセンター拠点。データセンター基準・騒音・送電線・環境規制が対象。
+# ※ Loudoun County は Municode 未掲載のため enCodePlus を一次ソースとする。
+city: loudoun_county
+state: VA
+county_fips: "51107" # Loudoun County, VA
+document_title: "Loudoun County Zoning Ordinance"
+url: "https://online.encodeplus.com/regs/loudouncounty-va-zo/doc-viewer.aspx"
+format: encodeplus
+encodeplus:
+  base_url: "https://online.encodeplus.com/regs/loudouncounty-va-zo"
+  # Phase 2 スコープ: Zoning Districts / Use-Specific Standards (Data Centers 等) /
+  # Overlay Districts / Natural and Environmental Resources / Development Standards
+  include_chapters: ["2", "4", "5", "6", "7"]
+max_chunk_chars: 1500
+tags:
+  - zoning
+  - data-centers
+  - noise
+  - transmission
+  - environmental

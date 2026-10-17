@@ -20,6 +20,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from govmcp_parser.chunker import chunk_text
+from govmcp_parser.encodeplus import fetch_encodeplus_sections
 from govmcp_parser.html_parser import html_to_markdown, split_into_sections
 from govmcp_parser.models import Chunk, GroundingMetadata
 from govmcp_parser.municode import (
@@ -66,6 +67,8 @@ def collect_sections(source: SourceDefinition, raw: bytes | None = None) -> list
     """Parse or fetch the sections for one source, in any supported format."""
     if source.format == "municode":
         return fetch_municode_sections(source)
+    if source.format == "encodeplus":
+        return fetch_encodeplus_sections(source)
     if raw is None:
         logger.info("fetching %s", source.url)
         raw = fetch(source.url)

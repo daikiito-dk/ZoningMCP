@@ -47,10 +47,12 @@ uv run govmcp-serve --data-dir data
 Drop a YAML file into `sources/` — no code changes required. Three source formats are supported:
 
 - `format: municode` — municipalities hosted on library.municode.com (the majority of US cities). Uses the library's JSON API; JS rendering is not required. See `sources/austin_tx.yaml`.
+- `format: encodeplus` — municipalities hosted on online.encodeplus.com (e.g. Loudoun County, VA). Crawls the server-rendered print view. See `sources/loudoun_county_va.yaml`.
 - `format: html` — a static HTML page; configure `section_pattern` (regex with `section_id` / `title` groups) and optionally `content_selector`.
 - `format: pdf` — a PDF code document; section boundaries come from `section_pattern`.
 
 Phase 1 ingests Austin's Land Development Code chapters 25-2 (Zoning), 25-7 (Drainage), and 25-8 (Environment): 666 sections / 1084 chunks.
+Phase 2 ingests Loudoun County's Zoning Ordinance chapters 2, 4, 5, 6, 7: 251 sections / 1209 chunks.
 
 ## Development
 

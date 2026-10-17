@@ -23,11 +23,14 @@ class SourceDefinition:
     county_fips: str
     document_title: str
     url: str
-    format: str = "html"  # "html" | "pdf" | "municode"
+    format: str = "html"  # "html" | "pdf" | "municode" | "encodeplus"
     effective_date: Optional[str] = None
     # For format="municode": {"state_abbr", "client_name", "product_name",
     # "client_path", "product_path", "include_chapters": [...]}
     municode: Optional[dict] = None
+    # For format="encodeplus": {"base_url": "https://online.encodeplus.com/regs/...",
+    # "include_chapters": [...]}
+    encodeplus: Optional[dict] = None
     # Regex with named groups (?P<section_id>...) and (?P<title>...) used to
     # detect section boundaries in the converted markdown/text.
     section_pattern: str = r"§\s*(?P<section_id>\d+-\d+-\d+)[.\s]+(?P<title>[^\n]+)"
